@@ -34,8 +34,11 @@ export class User {
     @Column()
     email!: string;
 
-    @Column()
+    @Column({ default: false})
     isActive!: boolean;
+
+    @Column({nullable: true})
+    userPhoto!: string;
 
     @Column({
         type: 'enum',

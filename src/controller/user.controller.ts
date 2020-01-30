@@ -1,5 +1,7 @@
-import express, { Router, Request, Response, Application } from 'express';
+import { connected } from '../middleware/connected-middleware';
 import { UserService } from '../services/user.service';
+import { Router, Request, Response, Application } from 'express';
+import { commonController } from './../core/comon.controller';
 
 /**
  * Ce controller vous servira de modèle pour construire vos différent controller
@@ -10,17 +12,29 @@ import { UserService } from '../services/user.service';
  */
 export const UserController = (app: Application) => {
 
-    const userRouter: Router = express.Router();
     const userService = new UserService();
+    let router = Router();
 
-    userRouter.get('/', async (req: Request, res: Response) => {
-        res.send(await userService.getAll());
+    router.use(connected());
+// Sur l'URL "me" dans "users", on récupère l'utilisateur associé à l'ID qu'il y a dans le Token
+    router.get('/me', async (req: Request, res: Response) => {
+        let user;
+        console.log((req as any).user);
+
+        try {
+            user = await userService.getById((req as any).user.id);
+        } catch (error) {
+            console.log(error);
+
+        }
+
+        if (!user) {
+            res.status(404).send('Aucun utilisateur trouvé pour ce token');
+        }
+        res.send(user);
     });
 
-    userRouter.post('/', async (req: Request, res: Response) => {
-        const user = req.body;
-        res.send(await userService.create(user));
-    });
+    router = commonController(userService, router);
 
-    app.use('/users', userRouter);
+    app.use('/users', router);
 };

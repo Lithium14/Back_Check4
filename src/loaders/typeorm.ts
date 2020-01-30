@@ -1,3 +1,4 @@
+import { Token } from './../entity/token.entity';
 import { environment } from './../environment/environment';
 import { createConnection, Connection } from 'typeorm';
 import { User } from '../entity/user.entity';
@@ -13,6 +14,7 @@ const connection: Connection = await createConnection({
     database: environment.DB_DATABASE,
     entities: [
         User,
+        Token,
     ],
     synchronize: true,
 });

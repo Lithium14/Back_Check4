@@ -1,23 +1,20 @@
+import { AbstractService } from '../core/abstract.service';
 import { UserRepository } from '../repository/user.repository';
 import { User } from '../entity/user.entity';
 import { getCustomRepository } from 'typeorm';
+
 /**
  * Cette classe est un service
  * C'est ici que l'ensemble de la logique consernant les psort doit apparaitre.
  * Attention ! Mettez le moins possible d'element dans le controlleur
  */
-export class UserService {
+export class UserService extends AbstractService {
 
-    private repository = getCustomRepository(UserRepository);
+    protected repository = getCustomRepository(UserRepository);
 
-    // Business logic
-    async getAll() {
-        return await this.repository.find();
-    }
-
-    async create(user: any) {
-        user = this.repository.create(user);
-        return await this.repository.save(user);
+    async userActivation(user: User) {
+        user.isActive = true;
+        await this.repository.update(user.id, user);
     }
 
 }

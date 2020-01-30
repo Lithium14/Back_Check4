@@ -1,8 +1,12 @@
-
+import { UserRole } from './../entity/user.entity';
 import { AbstractService } from './abstract.service';
 import express, { Request, Response, Router } from 'express';
+import { connected } from '../middleware/connected-middleware';
+import { checkRole } from '../middleware/check-role-middleware';
 
 export const commonController = (service: AbstractService, commonRouter = Router()) => {
+
+  commonRouter.use(connected());
 
   commonRouter.get('/', async (req: Request, res: Response) => {
       res.send(await service.getAll());
